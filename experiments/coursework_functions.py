@@ -1,5 +1,6 @@
 import math
 import numpy as np
+from tqdm.notebook import tqdm
 
 
 def print_2d_array(array_2d: np.ndarray, decimal_places=4):
@@ -61,7 +62,7 @@ def perform_convolution(image: np.ndarray, template: np.ndarray):
 
     new_image = [[0] * new_y for i in range(new_x)]
 
-    for row_offset in range(0, new_x):
+    for row_offset in tqdm(range(0, new_x)):
         for column_offset in range(0, new_y):
             sum = 0
             for row in range(0, n):
@@ -86,7 +87,7 @@ def perform_numpy_convolution(image: np.ndarray, template: np.ndarray):
     new_x, new_y = x - n + 1, y - m + 1
 
     sections = []
-    for row_offset in range(0, new_x):
+    for row_offset in tqdm(range(0, new_x)):
         for column_offset in range(0, new_y):
             section = np.zeros(shape=(n, m))
             for row in range(0, n):
