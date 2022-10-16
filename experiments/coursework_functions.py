@@ -2,12 +2,21 @@ import math
 import numpy as np
 
 
-def print_2d_array(array_2d: [[float]], decimal_places=4):
+def print_2d_array(array_2d: np.ndarray, decimal_places=4):
     print(
         '\n'.join([''.join([('{:.' + str(decimal_places) + 'f} ').format(item) for item in row]) for row in array_2d]))
 
 
-def create_guassian_filter(sigma):
+def create_guassian_filter(sigma: float):
+    """Create a template kernel using Guassian distribution
+
+    :param sigma: _description_
+    :type sigma: float
+
+    :return: Template kernel with Guassian distribution
+    :rtype: np.ndarray
+    """
+
     s = 2.0 * sigma * sigma
     n = m = int(8 * sigma + 1)
 
@@ -30,19 +39,21 @@ def create_guassian_filter(sigma):
     return guassian_filter
 
 
-def invert_template(original_template):
-    inverted_template = original_template.copy()
-    inverted_template.reverse()
+def perform_convolution(image: np.ndarray, template: np.ndarray):
+    """Applies the convolution operator on an image using a given template kernel
 
-    for row in inverted_template:
-        row.reverse()
+    :param image: Bitmap Image (Grayscale only supported)
+    :type image: np.ndarray
 
-    return inverted_template
+    :param template: Template (use `create_guassian_filter`)
+    :type template: np.ndarray
 
+    :return: Original image with filter applied 
+    :rtype: np.ndarray
+    """
 
-def perform_convolution(image: [[float]], template: [[float]]):
     # Flip the template around both axes
-    inverted_template = invert_template(template)
+    inverted_template = np.flip(template)
 
     x, y = len(image), len(image[0])
     n, m = len(inverted_template), len(inverted_template[0])
@@ -60,6 +71,33 @@ def perform_convolution(image: [[float]], template: [[float]]):
 
     return new_image
 
+def point_multiply(image, template):
+    sum = 0
+    for row in range(len(image)):
+        for column in range(len(image[0])):
+            sum += image[row][column] * template[row][column]
+    return sum
+def perform_numpy_convolution(image: np.ndarray, template: np.ndarray):
+    # Flip the template around both axes
+    inverted_template = np.flip(template)
+
+    x, y = len(image), len(image[0])
+    n, m = len(inverted_template), len(inverted_template[0])
+    new_x, new_y = x - n + 1, y - m + 1
+
+    sections = []
+    for row_offset in range(0, new_x):
+        for column_offset in range(0, new_y):
+            section = np.zeros(shape=(n, m))
+            for row in range(0, n):
+                for column in range(0, m):
+                    section[row][column] = image[row + row_offset][column + column_offset]
+            sections.append(section)
+
+    vfunc = np.vectorize(point_multiply, signature='(x,y),(x,y)->()')
+    out = vfunc(sections, inverted_template.tolist())
+
+    return [out[i:i+m] for i in range(0, len(out), m)]
 
 def red_text(text: str):
     return "\x1b[31m\"" + text + "\"\x1b[0m"
