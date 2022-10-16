@@ -30,9 +30,22 @@ def create_guassian_filter(sigma):
     return guassian_filter
 
 
-def apply_kernel(image: [[float]], kernel: [[float]]):
+def invert_template(original_template):
+    inverted_template = original_template.copy()
+    inverted_template.reverse()
+
+    for row in inverted_template:
+        row.reverse()
+
+    return inverted_template
+
+
+def perform_convolution(image: [[float]], template: [[float]]):
+    # Flip the template around both axes
+    inverted_template = invert_template(template)
+
     x, y = len(image), len(image[0])
-    n, m = len(kernel), len(kernel[0])
+    n, m = len(inverted_template), len(inverted_template[0])
     new_x, new_y = x - n + 1, y - m + 1
 
     new_image = [[0] * new_y for i in range(new_x)]
@@ -42,7 +55,7 @@ def apply_kernel(image: [[float]], kernel: [[float]]):
             sum = 0
             for row in range(0, n):
                 for column in range(0, m):
-                    sum += image[row + row_offset][column + column_offset] * kernel[row][column]
+                    sum += image[row + row_offset][column + column_offset] * inverted_template[row][column]
             new_image[row_offset][column_offset] = sum
 
     return new_image
