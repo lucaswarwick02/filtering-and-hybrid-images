@@ -2,12 +2,6 @@ import math
 import numpy as np
 from tqdm.notebook import tqdm
 
-
-def print_2d_array(array_2d: np.ndarray, decimal_places=4):
-    print(
-        '\n'.join([''.join([('{:.' + str(decimal_places) + 'f} ').format(item) for item in row]) for row in array_2d]))
-
-
 def create_guassian_filter(sigma: float):
     """Create a template kernel using Guassian distribution
 
