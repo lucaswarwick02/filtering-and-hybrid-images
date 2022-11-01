@@ -3,7 +3,6 @@ import numpy as np
 
 from MyConvolution import convolve
 
-
 def myHybridImages(lowImage: np.ndarray, lowSigma: float, highImage: np.ndarray, highSigma: float) -> np.ndarray:
     """
     Create hybrid images by combining a low-pass and high-pass filtered pair.
@@ -46,6 +45,10 @@ def makeGaussianKernel(sigma: float) -> np.ndarray:
     if (size % 2 == 0):
         # Size is even, make odd
         size += 1
+
+    # If size == 1, return unit kernel
+    if size == 1:
+        return np.array([[1]])
 
     kernel = np.zeros((size, size))
 
