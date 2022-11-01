@@ -60,9 +60,7 @@ def makeGaussianKernel(sigma: float) -> np.ndarray:
         for y in range(-y_range, y_range + 1):
             kernel[y + y_range][x + x_range] = (math.exp(-((x * x) + (y * y)) / (2 * sigma * sigma))) / (2 * math.pi * sigma * sigma)
             cum_sum += kernel[y + y_range][x + x_range]
-
-    for x in range(-x_range, x_range + 1):
-        for y in range(-y_range, y_range + 1):
-            kernel[y + y_range][x + x_range] /= cum_sum
+            
+    kernel /= cum_sum
 
     return kernel
