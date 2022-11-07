@@ -19,7 +19,7 @@ def convolve(image: np.ndarray, kernel: np.ndarray) -> np.ndarray:
     
     if image.ndim == 2:
         # Pad the pixel values to become arrays, can then iterate through
-        image = np.array(image)
+        image = image.reshape((image.shape[0], image.shape[1], 1))
 
     # Now image can be looped through
     new_image = np.zeros(shape=np.shape(image)).astype(int)
