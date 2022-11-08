@@ -12,7 +12,7 @@ def convolve(image: np.ndarray, kernel: np.ndarray) -> np.ndarray:
     """
     
     # Flip the template around both axes
-    inverted_template = np.flip(kernel)
+    inverted_template = kernel[::-1,::-1]
     
     x, y = len(image), len(image[0])
     offset = int((len(kernel) - 1) / 2)
@@ -24,9 +24,14 @@ def convolve(image: np.ndarray, kernel: np.ndarray) -> np.ndarray:
     # Now image can be looped through
     new_image = np.zeros(shape=np.shape(image)).astype(int)
         
+    # For each color index...
     for color_index in range(0, image.shape[2]):
+        # ... Grab the single 2D array
         color_array = image[:,:,color_index]
-        padded_color_array = np.pad(color_array, [offset, offset], mode='constant')
+        
+        padded_color_array = np.zeros((x + len(kernel) - 1, y + len(kernel) - 1)) # Create a zeroed array for padding the image
+        padded_color_array[offset:offset+x, offset:offset+y] = color_array # Add the image into the center of the padded image
+        
         new_color_array = np.zeros((x, y)).astype(int)
         for row in range(0+offset, x+offset):
             for column in range(0+offset, y+offset):
