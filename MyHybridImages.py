@@ -24,12 +24,6 @@ def myHybridImages(lowImage: np.ndarray, lowSigma: float, highImage: np.ndarray,
         The resultant image has the same size as the input images.
     :rtype numpy.ndarray
     """
-    if lowImage.ndim == 2:
-        # Pad the pixel values to become arrays, can then iterate through
-        lowImage = lowImage.reshape((lowImage.shape[0], lowImage.shape[1], 1))
-    if highImage.ndim == 2:
-        # Pad the pixel values to become arrays, can then iterate through
-        highImage = highImage.reshape((highImage.shape[0], highImage.shape[1], 1))
         
     low_pass_filter = makeGaussianKernel(sigma=lowSigma)
     low_pass_image = convolve(lowImage, low_pass_filter)
